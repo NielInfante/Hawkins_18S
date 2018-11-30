@@ -2,36 +2,39 @@ library(dada2); packageVersion("dada2")
 library(tidyverse)
 
 
-# Set working directory
-baseDir <- "~/"
+
+baseDir <- "~/depot/projects/Hawkins/Metagenomics_Brzostek/MyGo/18S_fromGit/"
 setwd(baseDir)
 
 # List of where the files are
 
-fnFs <- sort(list.files('~/projects/Anderson/outdir/noN', pattern="_R1.fastq.gz", full.names = TRUE))
-fnRs <- sort(list.files('~/projects/Anderson/outdir/noN', pattern="_R2.fastq.gz", full.names = TRUE))
+fnFs <- sort(list.files('~/depot/projects/Hawkins/Metagenomics_Brzostek/18Sqiime/18S_forward', pattern=".R1.fq", full.names = T))
+fnRs <- sort(list.files('~/depot/projects/Hawkins/Metagenomics_Brzostek/18Sqiime/18S_reverse', pattern=".R2.fq", full.names = T))
 
+# Get Sample names
+sample.names <- sort(list.files('~/depot/projects/Hawkins/Metagenomics_Brzostek/18Sqiime/18S_forward', pattern=".R1.fq", full.names = F))
+# <- sort(list.files('~/depot/projects/Hawkins/Metagenomics_Brzostek/16Sqiime/16S_reverse', pattern=".R2.fq", full.names = T))
 
-# Read the meta
-meta <- read.table('meta', header=T, sep="\t", stringsAsFactors = F)
-sample.names <- meta$Sample
+sample.names <- gsub(x = sample.names, pattern="_S.*", replacement = '', perl=T)
+sample.names <- gsub(x = sample.names, pattern="-", replacement = '')
+
 
 # Take a look at some quality
 plotQualityProfile(fnFs[1:2])
 plotQualityProfile(fnRs[1:2])
 
 # Create filtered files
-filt_path <- paste0(baseDir,"/dada2/filtered2")
+filt_path <- paste0(baseDir,"/filtered")
 filtFs <- file.path(filt_path, paste0(sample.names, "_F_filt.fastq.gz"))
 filtRs <- file.path(filt_path, paste0(sample.names, "_R_filt.fastq.gz"))
 
 out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(240,230), 
 										 trimLeft = 10,     
-                     maxN=0,  truncQ=2, rm.phix=TRUE,
-                     compress=TRUE, multithread=TRUE,
-#                     maxEE=c(3,4)
-                     maxEE=2
-                     )
+										 maxN=0,  truncQ=2, rm.phix=TRUE,
+										 compress=TRUE, multithread=TRUE,
+										 #                     maxEE=c(3,4)
+										 maxEE=2
+)
 head(out)
 
 #Dereplication
