@@ -7,25 +7,26 @@ library(tidyverse)
 library(gplots)
 library(ggrepel)
 
-setwd('~/projects/Anderson/Oct_2018')
-ps <- readRDS('data/Phyloseq_filtered.rds')
+setwd('~/depot/projects/Hawkins/Metagenomics_Brzostek/MyGo/18S_fromGit/')
+ps <- readRDS('data/PhyloseqObject.rds')
+#ps <- readRDS('data/Phyloseq_filtered.rds')
 
-outDir <- "~/projects/Anderson/Oct_2018/deseq"
-outPrefix <- 'Naive_Vehicle'
+outDir <- "~/depot/projects/Hawkins/Metagenomics_Brzostek/MyGo/18S_fromGit/deseq"
+outPrefix <- 'N_OH_Rhizo'
 
 #sample_data(ps)$Age_Day <- as.factor(sample_data(ps)$Age_Day)
 #names(sample_data(ps))[7] <- 'SurgeryType'
 
-psn <- subset_samples(ps, Treatment=='Naive' | Treatment=='Vehicle')
+psn <- subset_samples(ps, Treatment=='N' & Horizon=='Rhizo')
 
 
 #head(sample_data(ps)$Experiment)
 
 psn <- prune_samples(sample_sums(psn) > 100, psn)
 
-intGroup <- 'Treatment'
-contrast <- c('Treatment', 'Naive', 'Vehicle')
-dds <- phyloseq_to_deseq2(psn, ~  Cage + Treatment)
+intGroup <- 'FungAssoc'
+contrast <- c('FungAssoc', 'AM', 'Rhizo')
+dds <- phyloseq_to_deseq2(psn, ~  FungAssoc)
 dds <- DESeq(dds, test="Wald", fitType = "parametric")
 #intGroup <- 'Experiment'
 #dds <- phyloseq_to_deseq2(psn, ~  Experiment)
@@ -36,7 +37,7 @@ dds <- DESeq(dds, test="Wald", fitType = "parametric")
 gm_mean = function(x, na.rm=TRUE){
 	exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
 }
-dds <- phyloseq_to_deseq2(psn, ~ Cage + Treatment)
+dds <- phyloseq_to_deseq2(psn, ~ FungAssoc)
 geoMeans = apply(counts(dds), 1, gm_mean)
 dds = estimateSizeFactors(dds, geoMeans = geoMeans)
 dds = DESeq(dds, fitType="local")
@@ -81,8 +82,8 @@ dev.off()
 #	theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5, size=15))
 
 
-
 name <- paste(outDir, '/', outPrefix, '_significant.txt', sep="") 
+sigtab$ASV <- row.names(sigtab)
 write.table(sigtab, file=name, sep="\t", quote=F, row.names=F)
 
 # Now do the standard stuff
@@ -129,7 +130,7 @@ dev.off()
 
 name <- paste(outDir, '/', outPrefix, '_cluster.png', sep="") 
 png(name)
-plot(hclust(dist(t(assay(vsd)))), label=with(colData(dds), paste0(SampleID,':',Treatment)), main=outPrefix, xlab='', sub='')
+plot(hclust(dist(t(assay(vsd)))), label=with(colData(dds), paste0(SampleID,':',FungAssoc)), main=outPrefix, xlab='', sub='')
 dev.off()
 
 ############  PCA    ###########s
