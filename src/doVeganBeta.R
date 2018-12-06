@@ -5,12 +5,14 @@ library(tidyverse)
 library(ggplot2)
 library(phyloseq)
 
-setwd('~/projects/Anderson/Oct_2018')
-ps <- readRDS('data/Phyloseq_filtered.rds')
+setwd('~/depot/projects/Hawkins/Metagenomics_Brzostek/MyGo/18S_fromGit/')
+ps <- readRDS('data/PhyloseqObject.rds')
 
-psn <- subset_samples(ps, Treatment=='Naive' | Treatment=='Vehicle')
+psn <- subset_samples(ps, Treatment=='N' & Horizon=='Rhizo')
 
-dat <- psmelt(ps)
+
+meta <- sample_data(psn)
+#dat <- psmelt(ps)
 dat <- psmelt(psn)
 
 
@@ -33,19 +35,8 @@ abund_table_Base <- dat %>% select(Taxa, Sample, Abundance) %>%
 							spread(Sample, Ab) %>% ungroup()
 
 
-meta<-read.table("meta", sep="\t", header=T, stringsAsFactors = F)
 
-
-row.names(meta) <- meta$SampleID
-
-
-# Filter to test some subsets
-
-meta_table <- meta %>% filter(Treatment=='Naive' | Treatment=='Vehicle')
-
-#meta_table <- meta %>% filter(Age_Day==270 & Genotype=='CVN')
-
-filteredNames <- meta_table$SampleID
+filteredNames <- meta$IndexPair
 
 abund_table <- abund_table_Base %>% select(Taxa, filteredNames)
 abund_table <- as.data.frame(abund_table)
@@ -57,9 +48,11 @@ abund_table <- t(abund_table)
 at_sums <- rowSums(abund_table)
 abund_table <- abund_table[at_sums>0,]
 
-meta_table$Variable <- meta_table$Cage
+meta_table <- as.tibble(meta)
+meta_table$Variable <- meta_table$FungAssoc
 
-doBeta(title='Naive vs Vehicle', outfile='vegan/naive_vehicle_bray.png', label='Treatment', distance = 'bray', distanceName = 'Bray Curtis')
+doBeta(title='FungAssoc', outfile='vegan/N_Rhizo_FungAssoc_bray.png', label='Fungal Association', distance = 'bray', distanceName = 'Bray Curtis')
+
 doBeta(title='Naive vs Vehicle', outfile='vegan/naive_vehicle_jaccard.png', label='Treatment', distance = 'jaccard', distanceName = 'Jaccard')
 doBeta(title='Cage', outfile='vegan/cage_bray.png', label='Cage', distance = 'bray', distanceName = 'Bray Curtis')
 
