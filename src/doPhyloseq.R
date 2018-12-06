@@ -3,7 +3,7 @@ library(ggplot2)
 library("gridExtra")
 library(dplyr)
 
-setwd('~/projects/Anderson')
+setwd('~/depot/projects/Hawkins/Metagenomics_Brzostek/MyGo/18S_fromGit/')
 
 # Play with shiny, if you like
 #install.packages("shiny")
