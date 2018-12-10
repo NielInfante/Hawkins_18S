@@ -11,7 +11,7 @@
   * Expected error of 2
 * Filter merged sequences to between 250 and 400 bases
 * Remove chimeras
-* Assign taxonomy using silva 132 a8S
+* Assign taxonomy using silva 132 18S
 
 
 ### Do Filtering with doPhyloseq.R
