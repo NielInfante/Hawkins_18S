@@ -8,7 +8,7 @@ library(gplots)
 library(ggrepel)
 
 setwd('~/depot/projects/Hawkins/Metagenomics_Brzostek/MyGo/18S_fromGit/')
-ps <- readRDS('data/PhyloseqObject.rds')
+ps <- readRDS('Data/PhyloseqObject.rds')
 #ps <- readRDS('data/Phyloseq_filtered.rds')
 
 outDir <- "~/depot/projects/Hawkins/Metagenomics_Brzostek/MyGo/18S_fromGit/deseq"

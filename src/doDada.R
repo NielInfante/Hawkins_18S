@@ -158,5 +158,5 @@ ps <- phyloseq(otu_table(seqtab.nochim, taxa_are_rows = F), sample_data(meta), t
 
 
 
-saveRDS(ps, file="data/PhyloseqObject.rds")
-save(ps, file="data/PS.Rdata")
+saveRDS(ps, file="Data/PhyloseqObject.rds")
+save(ps, file="Data/PS.Rdata")

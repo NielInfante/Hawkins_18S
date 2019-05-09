@@ -4,9 +4,9 @@ library(ggplot2)
 library(RColorBrewer)
 library(tidyverse)
 
-setwd('~/depot/projects/Hussain/Oct_2018/')
+setwd('~/depot/projects/Hawkins/Metagenomics_Brzostek/MyGo/18S_fromGit')
 
-ps <- readRDS('dada2/Phyloseq_filtered.rds')
+ps <- readRDS('Data/PhyloseqObject.rds')
 
 
 #sample_data(ps)$Treatment <- gsub("BpO", "B+O", sample_data(ps)$Treatment)
@@ -18,7 +18,17 @@ png('pics/alpha_by_day.png')
 #p <- plot_richness(ps, x="Treatment", measures=c("Shannon", "Simpson"), color="Day") + theme_bw() + geom_point(size=2)
 
 p <- plot_richness(ps, x="Treatment", measures=c("Shannon", "Simpson")) + theme_bw() + geom_point(size=2)
-p + geom_boxplot(data=p$data, aes(x=Treatment, y=value, color=NULL), alpha = 0.1) + facet_grid( variable ~ Day, scales='free')
+
+p <- plot_richness(ps, x="Treatment", measures=c("Shannon")) + theme_bw() + geom_point(size=2)
+p + geom_boxplot(data=p$data, aes(x=Treatment, y=value, color=NULL), alpha = 0.1) + facet_grid( Horizon ~ FungAssoc, scales='free')+
+	labs(y='Shannon', title='Alpha Diversity')
+
+p <- plot_richness(ps, x="Treatment", measures=c("Simpson")) + theme_bw() + geom_point(size=2)
+p + geom_boxplot(data=p$data, aes(x=Treatment, y=value, color=NULL), alpha = 0.1) + facet_grid( Horizon ~ FungAssoc, scales='free') +
+	labs(y='Simpson')
+
+
+
 
 dev.off()
 
